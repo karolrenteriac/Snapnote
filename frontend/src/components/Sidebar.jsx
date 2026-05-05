@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -42,6 +42,7 @@ export function Sidebar({
   onDeleteFolder,
   className = '',
 }) {
+  const [folderSearchTerm, setFolderSearchTerm] = useState('');
   const [editingFolderId, setEditingFolderId] = useState(null);
   const [editName, setEditName] = useState('');
   const [renameError, setRenameError] = useState('');
@@ -138,12 +139,30 @@ export function Sidebar({
 
   const deletingFolder = folders.find((f) => f.id != null && Number(f.id) === Number(deleteConfirmId));
 
+  const filteredFolders = useMemo(() => {
+    if (!folderSearchTerm.trim()) return folders;
+    const lowerSearch = folderSearchTerm.toLowerCase();
+    return folders.filter((f) => {
+      const name = f.name || 'Sin carpeta';
+      return name.toLowerCase().includes(lowerSearch);
+    });
+  }, [folders, folderSearchTerm]);
+
   return (
     <aside
       className={`flex w-56 shrink-0 flex-col border-r border-slate-200/90 bg-white lg:w-64 ${className}`.trim()}
     >
       <div className="border-b border-slate-100 px-4 py-4">
         <h2 className="text-sm font-semibold tracking-tight text-slate-900">Carpetas</h2>
+        <div className="mt-3">
+          <input
+            type="text"
+            placeholder="Buscar carpetas..."
+            value={folderSearchTerm}
+            onChange={(e) => setFolderSearchTerm(e.target.value)}
+            className="w-full rounded-md border border-slate-200 px-3 py-1.5 text-sm transition-colors focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/20"
+          />
+        </div>
         <motion.button
           type="button"
           onClick={() => onCreateFolder?.()}
@@ -161,7 +180,10 @@ export function Sidebar({
 
       <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
         <ul className="space-y-0.5">
-          {folders.map((folder) => {
+          {filteredFolders.length === 0 && folderSearchTerm.trim() && (
+            <p className="px-2 py-2 text-sm text-slate-500">No se encontraron resultados</p>
+          )}
+          {filteredFolders.map((folder) => {
             const active = isFolderActive(selectedFolderId, folder);
             const showCount = folder.noteCount !== undefined && folder.noteCount !== null;
             const isReal = folder?.id != null && !folder?.isVirtual;
