@@ -1,6 +1,6 @@
 export function Navbar({
   title = 'SnapNote',
-  userLabel = 'usuario@ejemplo.com',
+  userEmail = '',
   onLogout,
 }) {
   return (
@@ -9,8 +9,18 @@ export function Navbar({
         {title}
       </h1>
       <div className="flex items-center gap-3">
-        <span className="hidden max-w-[200px] truncate text-sm text-slate-600 sm:inline">
-          {userLabel}
+        <span
+          className="hidden max-w-[min(280px,40vw)] truncate text-sm text-slate-600 sm:inline"
+          title={userEmail || undefined}
+        >
+          {userEmail ? (
+            <>
+              <span className="font-medium text-slate-800">Usuario · </span>
+              {userEmail}
+            </>
+          ) : (
+            <span className="text-slate-500">Usuario</span>
+          )}
         </span>
         <button
           type="button"

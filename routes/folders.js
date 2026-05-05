@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 const auth = require('../middleware/auth');
 
-// ✅ CREAR CARPETA
 router.post('/', auth, async (req, res) => {
   const { name } = req.body;
 
@@ -17,115 +16,122 @@ router.post('/', auth, async (req, res) => {
   const folder = await prisma.folder.create({
     data: {
       name,
-      userId: req.userId
-    }
+      userId: req.userId,
+    },
   });
 
   res.json(folder);
 });
 
-// ✅ VER CARPETAS + NOTAS
 router.get('/', auth, async (req, res) => {
   const folders = await prisma.folder.findMany({
     where: { userId: req.userId },
     include: {
-      notes: true
-    }
+      notes: true,
+    },
   });
 
   res.json(folders);
 });
 
-// ✅ ACTUALIZAR CARPETA (nombre + mover notas)
 router.put('/:id', auth, async (req, res) => {
   const id = Number(req.params.id);
   const { name, noteIds } = req.body;
 
   try {
-    // verificar carpeta
     const folder = await prisma.folder.findFirst({
-      where: { id, userId: req.userId }
+      where: { id, userId: req.userId },
     });
 
     if (!folder) {
       return res.status(404).json({ error: 'Carpeta no encontrada' });
     }
 
-    // actualizar nombre
-    if (name) {
+    let nameToSet = null;
+    if (typeof name === 'string') {
+      const trimmed = name.trim();
+      if (!trimmed) {
+        return res.status(400).json({ error: 'Nombre inválido' });
+      }
+      nameToSet = trimmed;
+    }
+
+    if (nameToSet != null) {
       await prisma.folder.update({
         where: { id },
-        data: { name }
+        data: { name: nameToSet },
       });
     }
 
-    // mover notas (meter a carpeta)
     if (noteIds && Array.isArray(noteIds)) {
       await prisma.note.updateMany({
         where: {
           id: { in: noteIds },
-          userId: req.userId
+          userId: req.userId,
         },
         data: {
-          folderId: id
-        }
+          folderId: id,
+        },
       });
     }
 
-    res.json({ message: 'Carpeta actualizada' });
+    const updated = await prisma.folder.findFirst({
+      where: { id, userId: req.userId },
+    });
 
+    res.json({
+      message: 'Carpeta actualizada',
+      folder: updated,
+    });
   } catch (error) {
+    console.error('[PUT /api/folders/:id]', error);
     res.status(500).json({ error: 'Error al actualizar carpeta' });
   }
 });
 
-// ✅ SACAR NOTA DE CARPETA
 router.put('/:id/remove-note', auth, async (req, res) => {
   const { noteId } = req.body;
 
   await prisma.note.updateMany({
     where: {
       id: noteId,
-      userId: req.userId
+      userId: req.userId,
     },
     data: {
-      folderId: null
-    }
+      folderId: null,
+    },
   });
 
   res.json({ message: 'Nota removida de carpeta' });
 });
 
-// ✅ ELIMINAR CARPETA + NOTAS
 router.delete('/:id', auth, async (req, res) => {
   const id = Number(req.params.id);
 
   try {
-    // verificar carpeta
     const folder = await prisma.folder.findFirst({
-      where: { id, userId: req.userId }
+      where: { id, userId: req.userId },
     });
 
     if (!folder) {
       return res.status(404).json({ error: 'Carpeta no encontrada' });
     }
 
-    // 🔥 eliminar notas dentro
-    await prisma.note.deleteMany({
+    await prisma.note.updateMany({
       where: {
         folderId: id,
-        userId: req.userId
-      }
+        userId: req.userId,
+      },
+      data: { folderId: null },
     });
 
-    // eliminar carpeta
     await prisma.folder.delete({
-      where: { id }
+      where: { id },
     });
 
-    res.json({ message: 'Carpeta y notas eliminadas' });
-
+    res.json({ message: 'Carpeta eliminada' });
   } catch (error) {
+    console.error('[DELETE /api/folders/:id]', error);
     res.status(500).json({ error: 'Error al eliminar carpeta' });
   }
 });

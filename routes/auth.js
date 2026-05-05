@@ -93,7 +93,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.json({ token });
+    res.json({ token, email: user.email });
   } catch {
     res.status(500).json({ error: 'Error en login' });
   }

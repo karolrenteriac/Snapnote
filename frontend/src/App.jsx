@@ -1,25 +1,29 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { PrivateRoute } from './components/PrivateRoute.jsx';
-import { LoginPage } from './pages/LoginPage.jsx';
-import { RegisterPage } from './pages/RegisterPage.jsx';
-import { NotesAppPage } from './pages/NotesAppPage.jsx';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { NotesAppPage } from './pages/NotesAppPage';
+import { PrivateRoute } from './components/PrivateRoute';
 
-export default function App() {
+function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <NotesAppPage />
-            </PrivateRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      {/* 🔥 ROOT → LOGIN */}
+      <Route path="/" element={<Navigate to="/login" />} />
+
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+
+      {/* 🔐 PROTEGIDO */}
+      <Route
+        path="/app"
+        element={
+          <PrivateRoute>
+            <NotesAppPage />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
 }
+
+export default App;

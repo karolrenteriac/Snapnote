@@ -1,32 +1,23 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { AuthApiError, loginRequest, registerRequest } from '../api/authApi.js';
-import { getToken, setToken } from '../auth/tokenStorage.js';
+import { useNavigate } from 'react-router-dom';
 import { Register } from '../components/Register.jsx';
+import { registerRequest } from '../api/authApi.js';
 
 export function RegisterPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  if (getToken()) {
-    return <Navigate to="/" replace />;
-  }
-
   const handleSubmit = async ({ email, password }) => {
-    setError('');
-    setLoading(true);
     try {
+      setLoading(true);
+      setError('');
+
       await registerRequest(email, password);
-      const { token } = await loginRequest(email, password);
-      setToken(token);
-      navigate('/', { replace: true });
-    } catch (e) {
-      if (e instanceof AuthApiError) {
-        setError(e.message);
-      } else {
-        setError('No se pudo conectar. Comprueba que la API esté en marcha.');
-      }
+
+      navigate('/login');
+    } catch (err) {
+      setError(err.message || 'Error al registrarse');
     } finally {
       setLoading(false);
     }

@@ -1,31 +1,27 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { AuthApiError, loginRequest } from '../api/authApi.js';
-import { getToken, setToken } from '../auth/tokenStorage.js';
+import { useNavigate } from 'react-router-dom';
 import { Login } from '../components/Login.jsx';
+import { loginRequest } from '../api/authApi.js';
+import { setToken, setUserEmail } from '../auth/tokenStorage.js';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  if (getToken()) {
-    return <Navigate to="/" replace />;
-  }
-
   const handleSubmit = async ({ email, password }) => {
-    setError('');
-    setLoading(true);
     try {
-      const { token } = await loginRequest(email, password);
-      setToken(token);
-      navigate('/', { replace: true });
-    } catch (e) {
-      if (e instanceof AuthApiError) {
-        setError(e.message);
-      } else {
-        setError('No se pudo conectar. Comprueba que la API esté en marcha.');
-      }
+      setLoading(true);
+      setError('');
+
+      const data = await loginRequest(email, password);
+
+      setToken(data.token);
+      setUserEmail(data.email ?? email);
+
+      navigate('/app');
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
