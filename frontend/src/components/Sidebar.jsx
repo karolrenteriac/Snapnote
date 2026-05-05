@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Folder, Pencil, Trash2, Plus, Search } from 'lucide-react';
 
 const defaultFolders = [
   { id: '1', name: 'Personal', noteCount: 4 },
@@ -9,18 +10,6 @@ const defaultFolders = [
 ];
 
 const easeOut = [0.25, 0.1, 0.25, 1];
-
-function FolderIcon({ className = 'h-4 w-4' }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
-      />
-    </svg>
-  );
-}
 
 function folderRowKey(folder) {
   if (folder?.id == null) return 'sin-carpeta';
@@ -150,30 +139,29 @@ export function Sidebar({
 
   return (
     <aside
-      className={`flex w-56 shrink-0 flex-col border-r border-slate-200/90 bg-white lg:w-64 ${className}`.trim()}
+      className={`flex w-56 shrink-0 flex-col border-r border-gray-200 bg-white lg:w-64 ${className}`.trim()}
     >
-      <div className="border-b border-slate-100 px-4 py-4">
-        <h2 className="text-sm font-semibold tracking-tight text-slate-900">Carpetas</h2>
-        <div className="mt-3">
+      <div className="border-b border-gray-100 px-4 py-4">
+        <h2 className="text-sm font-semibold tracking-tight text-gray-900">Carpetas</h2>
+        <div className="mt-3 relative">
+          <Search className="absolute left-2.5 top-2 text-gray-400" size={16} />
           <input
             type="text"
             placeholder="Buscar carpetas..."
             value={folderSearchTerm}
             onChange={(e) => setFolderSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-slate-200 px-3 py-1.5 text-sm transition-colors focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/20"
+            className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
         </div>
         <motion.button
           type="button"
           onClick={() => onCreateFolder?.()}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           transition={{ duration: 0.18, ease: easeOut }}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors duration-200 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/30 focus-visible:ring-offset-2"
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-pink-50 px-3 py-2 text-sm font-medium text-pink-700 transition-colors duration-200 hover:bg-pink-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
         >
-          <span className="text-base leading-none text-slate-500" aria-hidden>
-            +
-          </span>
+          <Plus size={16} />
           Crear carpeta
         </motion.button>
       </div>
@@ -181,7 +169,7 @@ export function Sidebar({
       <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
         <ul className="space-y-0.5">
           {filteredFolders.length === 0 && folderSearchTerm.trim() && (
-            <p className="px-2 py-2 text-sm text-slate-500">No se encontraron resultados</p>
+            <p className="px-2 py-2 text-sm text-gray-500">No se encontraron resultados</p>
           )}
           {filteredFolders.map((folder) => {
             const active = isFolderActive(selectedFolderId, folder);
@@ -200,17 +188,10 @@ export function Sidebar({
               >
                 <motion.div
                   layout
-                  whileHover={
-                    isEditing
-                      ? undefined
-                      : { scale: 1.02 }
-                  }
-                  transition={{ duration: 0.2, ease: easeOut }}
-                  style={{ transformOrigin: 'center left' }}
-                  className={`rounded-lg px-1 py-1 transition-colors duration-200 ${
+                  className={`group rounded-lg px-2 py-1.5 transition-colors duration-200 flex items-center justify-between ${
                     active
-                      ? 'bg-slate-100 ring-1 ring-slate-200/80'
-                      : 'hover:bg-slate-100/80'
+                      ? 'bg-pink-100 font-semibold text-pink-700'
+                      : 'hover:bg-pink-50 text-gray-700'
                   }`}
                 >
                   {isEditing ? (
@@ -218,13 +199,13 @@ export function Sidebar({
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="flex flex-col gap-2 px-1.5 py-1"
+                      className="flex flex-col gap-2 w-full"
                     >
                       <input
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
                         disabled={renameSaving}
-                        className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm transition-all duration-200 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/35"
+                        className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm transition-all duration-200 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
                         autoFocus
                         aria-label="Nombre de carpeta"
                         onKeyDown={(e) => {
@@ -236,97 +217,80 @@ export function Sidebar({
                         }}
                       />
                       {renameError ? (
-                        <p className="text-xs text-red-600">{renameError}</p>
+                        <p className="text-xs text-red-500">{renameError}</p>
                       ) : null}
                       <div className="flex flex-wrap gap-2">
-                        <motion.button
+                        <button
                           type="button"
                           disabled={renameSaving}
                           onClick={() => submitRename()}
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          transition={{ duration: 0.15 }}
-                          className="rounded-md bg-slate-900 px-2.5 py-1 text-xs font-medium text-white transition-colors duration-200 disabled:opacity-50"
+                          className="rounded-lg bg-pink-500 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-50"
                         >
                           Guardar
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                           type="button"
                           disabled={renameSaving}
                           onClick={cancelEdit}
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          transition={{ duration: 0.15 }}
-                          className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-colors duration-200"
+                          className="rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-medium text-pink-700 transition-colors hover:bg-pink-100"
                         >
                           Cancelar
-                        </motion.button>
+                        </button>
                       </div>
                     </motion.div>
                   ) : (
-                    <div className="flex w-full items-center gap-0.5">
+                    <>
                       <button
                         type="button"
                         onClick={() => onSelectFolder?.(folder)}
-                        className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-md px-1.5 py-1.5 text-left text-sm transition-colors duration-200 ${
-                          active ? 'font-medium text-slate-900' : 'font-normal text-slate-700'
-                        }`}
+                        className="group/folder flex min-w-0 flex-1 items-center gap-2.5 text-left text-sm relative"
                       >
-                        <span
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-shadow duration-200 ${
-                            active ? 'bg-white text-slate-600 shadow-sm' : 'bg-slate-50 text-slate-500'
-                          }`}
-                          aria-hidden
-                        >
-                          <FolderIcon />
-                        </span>
+                        <Folder size={16} className="text-pink-500" />
                         <span className="min-w-0 flex-1 truncate">{folder.name}</span>
                         {showCount && (
                           <span
-                            className={`shrink-0 tabular-nums text-xs transition-colors duration-200 ${
-                              active ? 'text-slate-600' : 'text-slate-400'
+                            className={`shrink-0 tabular-nums text-xs ${
+                              active ? 'text-pink-600' : 'text-gray-400'
                             }`}
                             title={`${folder.noteCount} nota${folder.noteCount === 1 ? '' : 's'}`}
                           >
                             {folder.noteCount}
                           </span>
                         )}
+                        <div className="pointer-events-none absolute left-8 -top-8 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200 group-hover/folder:opacity-100 z-50">
+                          Selecciona una carpeta
+                          <div className="absolute left-4 top-full border-4 border-transparent border-t-gray-800" />
+                        </div>
                       </button>
                       {isReal && (
-                        <>
-                          <motion.button
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
                             type="button"
                             title="Editar carpeta"
                             aria-label="Editar carpeta"
-                            whileHover={{ scale: 1.06 }}
-                            whileTap={{ scale: 0.94 }}
-                            transition={{ duration: 0.15 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               startEdit(folder);
                             }}
-                            className="shrink-0 rounded-md px-1.5 py-1.5 text-sm text-slate-600 transition-colors duration-200 hover:bg-white hover:text-slate-900"
+                            className="rounded p-1 text-pink-500 hover:bg-pink-100 hover:text-pink-700 transition-colors"
                           >
-                            ✏️
-                          </motion.button>
-                          <motion.button
+                            <Pencil size={14} />
+                          </button>
+                          <button
                             type="button"
                             title="Eliminar carpeta"
                             aria-label="Eliminar carpeta"
-                            whileHover={{ scale: 1.06 }}
-                            whileTap={{ scale: 0.94 }}
-                            transition={{ duration: 0.15 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               startDeleteConfirm(folder);
                             }}
-                            className="shrink-0 rounded-md px-1.5 py-1.5 text-sm text-slate-600 transition-colors duration-200 hover:bg-white hover:text-red-700"
+                            className="rounded p-1 text-pink-600 hover:bg-pink-100 hover:text-pink-700 transition-colors"
                           >
-                            🗑️
-                          </motion.button>
-                        </>
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       )}
-                    </div>
+                    </>
                   )}
                 </motion.div>
               </motion.li>
@@ -349,7 +313,7 @@ export function Sidebar({
               >
                 <motion.div
                   role="presentation"
-                  className="absolute inset-0 bg-slate-900/25 backdrop-blur-[1px]"
+                  className="absolute inset-0 bg-gray-900/25 backdrop-blur-[1px]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -360,50 +324,44 @@ export function Sidebar({
                   role="dialog"
                   aria-modal="true"
                   aria-labelledby="delete-folder-title"
-                  className="relative w-full max-w-sm rounded-xl border border-slate-200/90 bg-white p-5 shadow-xl"
+                  className="relative w-full max-w-sm rounded-xl border border-gray-200 bg-white p-5 shadow-xl"
                   initial={{ opacity: 0, scale: 0.95, y: 8 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 8 }}
                   transition={{ duration: 0.24, ease: easeOut }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h3 id="delete-folder-title" className="text-base font-semibold text-slate-900">
+                  <h3 id="delete-folder-title" className="text-base font-semibold text-gray-900">
                     ¿Eliminar carpeta?
                   </h3>
                   {deletingFolder?.name ? (
-                    <p className="mt-1 truncate text-sm text-slate-600" title={deletingFolder.name}>
+                    <p className="mt-1 truncate text-sm text-gray-600" title={deletingFolder.name}>
                       «{deletingFolder.name}»
                     </p>
                   ) : null}
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-2 text-sm text-gray-500">
                     Las notas pasarán a «Sin carpeta».
                   </p>
                   {deleteError ? (
-                    <p className="mt-3 text-xs text-red-600">{deleteError}</p>
+                    <p className="mt-3 text-xs text-red-500">{deleteError}</p>
                   ) : null}
                   <div className="mt-4 flex flex-wrap justify-end gap-2">
-                    <motion.button
+                    <button
                       type="button"
                       disabled={deletePending}
                       onClick={cancelDelete}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ duration: 0.15 }}
-                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-slate-50"
+                      className="rounded-lg bg-pink-50 px-4 py-2 text-sm font-medium text-pink-700 transition-colors hover:bg-pink-100"
                     >
                       Cancelar
-                    </motion.button>
-                    <motion.button
+                    </button>
+                    <button
                       type="button"
                       disabled={deletePending}
                       onClick={confirmDelete}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ duration: 0.15 }}
-                      className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700 disabled:opacity-50"
+                      className="rounded-lg bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-pink-700 hover:scale-[1.02] disabled:opacity-50 disabled:scale-100"
                     >
                       {deletePending ? 'Eliminando…' : 'Eliminar'}
-                    </motion.button>
+                    </button>
                   </div>
                 </motion.div>
               </motion.div>

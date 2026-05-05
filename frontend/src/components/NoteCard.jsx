@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../services/api.js';
+import { Pencil, Trash2 } from 'lucide-react';
 
 const easeOut = [0.25, 0.1, 0.25, 1];
 
@@ -46,73 +47,76 @@ export function NoteCard({ note, onDeleteClick, onUpdate }) {
         y: -2,
         transition: { duration: 0.18, ease: easeOut },
       }}
-      className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+      className="rounded-xl border border-pink-100 bg-white p-5 shadow-sm transition-all duration-200 hover:border-pink-300 hover:shadow-md"
     >
       {isEditing ? (
-        <>
+        <div className="space-y-3">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mb-2 w-full rounded-lg border border-slate-200 p-2 text-sm transition-all duration-200 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/35"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all duration-200 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="mb-2 w-full rounded-lg border border-slate-200 p-2 text-sm transition-all duration-200 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/35"
+            rows={4}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all duration-200 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
 
           <div className="flex gap-2">
-            <motion.button
+            <button
               type="button"
               onClick={handleUpdate}
               disabled={loading}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.15 }}
-              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-emerald-700 disabled:opacity-50"
+              className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-50"
             >
               Guardar
-            </motion.button>
+            </button>
 
-            <motion.button
+            <button
               type="button"
               onClick={() => setIsEditing(false)}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.15 }}
-              className="rounded-lg bg-slate-400 px-3 py-1.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-slate-500"
+              className="rounded-lg bg-pink-50 px-4 py-2 text-sm font-medium text-pink-700 transition-colors hover:bg-pink-100"
             >
               Cancelar
-            </motion.button>
+            </button>
           </div>
-        </>
+        </div>
       ) : (
         <>
-          <h3 className="font-bold text-slate-900">{note.title}</h3>
-          <p className="text-slate-600">{note.content}</p>
+          <h3 className="font-semibold text-gray-900 text-lg mb-1">{note.title}</h3>
+          <p className="text-gray-600 mb-4 whitespace-pre-wrap">{note.content}</p>
 
-          <div className="mt-3 flex gap-2">
-            <motion.button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.15 }}
-              className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-amber-600"
-            >
-              Editar
-            </motion.button>
+          <div className="flex gap-2">
+            <div className="group relative">
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1.5 rounded-lg bg-pink-50 px-4 py-2 text-sm font-medium text-pink-700 transition-colors hover:bg-pink-100"
+              >
+                <Pencil size={16} />
+                Editar
+              </button>
+              <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                Editar nota
+                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
+              </div>
+            </div>
 
-            <motion.button
-              type="button"
-              onClick={() => onDeleteClick(note)}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.15 }}
-              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700"
-            >
-              Eliminar
-            </motion.button>
+            <div className="group relative">
+              <button
+                type="button"
+                onClick={() => onDeleteClick(note)}
+                className="flex items-center gap-1.5 rounded-lg bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-pink-700 hover:scale-[1.02]"
+              >
+                <Trash2 size={16} />
+                Eliminar
+              </button>
+              <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                Eliminar nota
+                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
+              </div>
+            </div>
           </div>
         </>
       )}

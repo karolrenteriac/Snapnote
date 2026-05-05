@@ -53,7 +53,7 @@ export function NoteCreateForm({ folderId, disabled, onCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <form onSubmit={handleSubmit} className="rounded-xl border border-pink-100 bg-white p-5 shadow-sm mb-6 transition-all duration-200 hover:border-pink-300">
       <div className="flex flex-col gap-3">
         <input
           type="text"
@@ -61,7 +61,7 @@ export function NoteCreateForm({ folderId, disabled, onCreated }) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           disabled={disabled || submitting}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm transition-all duration-200 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/35 disabled:opacity-60"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all duration-200 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-60"
         />
         <textarea
           placeholder="Contenido"
@@ -69,15 +69,21 @@ export function NoteCreateForm({ folderId, disabled, onCreated }) {
           onChange={(e) => setContent(e.target.value)}
           disabled={disabled || submitting}
           rows={4}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm transition-all duration-200 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/35 disabled:opacity-60"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all duration-200 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-60"
         />
-        <button
-          type="submit"
-          disabled={disabled || submitting}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-transform duration-150 hover:scale-[1.03] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50"
-        >
-          {submitting ? 'Creando…' : 'Crear nota'}
-        </button>
+        <div className="group relative self-start">
+          <button
+            type="submit"
+            disabled={disabled || submitting}
+            className="rounded-lg bg-pink-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-600 disabled:pointer-events-none disabled:opacity-50"
+          >
+            {submitting ? 'Creando…' : 'Crear nota'}
+          </button>
+          <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            Crea una nueva nota
+            <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
+          </div>
+        </div>
       </div>
     </form>
   );

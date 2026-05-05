@@ -7,7 +7,7 @@ export function Layout({
   sidebarProps,
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-100">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       <Navbar {...navbarProps} />
       <div className="flex min-h-0 flex-1">
         <Sidebar {...sidebarProps} />
