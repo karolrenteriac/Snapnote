@@ -1,7 +1,7 @@
 import { getToken, removeToken } from '../auth/tokenStorage.js';
 
 export function getApiBaseUrl() {
-  return (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+  return (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 }
 
 export class ApiError extends Error {

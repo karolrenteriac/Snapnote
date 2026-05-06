@@ -1,0 +1,16 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo -->
+  <rect width="120" height="120" rx="28" fill="#ec4899"/>
+
+  <!-- Hoja -->
+  <rect x="30" y="25" width="60" height="70" rx="10" fill="white"/>
+
+  <!-- Líneas de nota -->
+  <line x1="40" y1="45" x2="80" y2="45" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="55" x2="75" y2="55" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="65" x2="70" y2="65" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Lápiz -->
+  <path d="M65 75L85 55L95 65L75 85H65V75Z" fill="#be185d"/>
+  <path d="M85 55L90 50L100 60L95 65L85 55Z" fill="#f9a8d4"/>
+</svg>
