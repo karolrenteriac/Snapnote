@@ -6,17 +6,20 @@ const helmet = require('helmet');
 
 const app = express();
 
-// A05: Security Misconfiguration - Configure CORS properly
+// ✅ CORS seguro para local + producción
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Adjust this securely in production
+  origin: [
+    'http://localhost:5173',
+    process.env.FRONTEND_URL
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// A05: Security Misconfiguration - HTTP headers protection
+// ✅ Seguridad headers
 app.use(helmet());
 
-// A05: Security Misconfiguration - Limit payload size to prevent DOS
+// ✅ Limitar payload
 app.use(express.json({ limit: '10kb' }));
 
 app.get('/', (req, res) => {
@@ -27,12 +30,18 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
 app.use('/api/folders', require('./routes/folders'));
 
-// A05: Security Misconfiguration - Global Error Handler to prevent stack trace leaks
+// ✅ Error handler global
 app.use((err, req, res, next) => {
   console.error('[Global Error]', err);
-  res.status(500).json({ error: 'Error interno del servidor' });
+
+  res.status(500).json({
+    error: 'Error interno del servidor'
+  });
 });
 
-app.listen(5000, () => {
-  console.log('Server on 5000');
-}); 
+// ✅ Render usa PORT automáticamente
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server on ${PORT}`);
+});
